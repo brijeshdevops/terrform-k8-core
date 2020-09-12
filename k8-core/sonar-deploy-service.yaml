@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-sonar-server
+  labels:
+    app: testing-tools
+
+spec:
+  template:
+    metadata:
+      name: pod-sonar-server
+      labels:
+        app: testing-tools
+        service: sonar-server
+    spec:
+      containers:
+        - name: sonar-server
+          image: sonarqube
+          ports:
+            - containerPort: 9000
+            - containerPort: 9092
+  replicas: 1
+  selector:
+    matchLabels:
+      app: testing-tools
+      service: sonar-server
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonar-server
+spec:
+  ports:
+    - name: "9000"
+      targetPort: 9000
+      port: 9000
+    - name: "9092"
+      targetPort: 9092
+      port: 9092
+  selector:
+    app: testing-tools
+    service: sonar-server
